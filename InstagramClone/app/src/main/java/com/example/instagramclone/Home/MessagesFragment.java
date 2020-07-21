@@ -1,6 +1,7 @@
 package com.example.instagramclone.Home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.instagramclone.R;
-
-
-/**
- * Created by User on 5/28/2017.
- */
 
 public class MessagesFragment extends Fragment
 {

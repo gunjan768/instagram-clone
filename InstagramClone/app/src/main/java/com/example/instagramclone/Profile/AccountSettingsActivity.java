@@ -1,6 +1,8 @@
 package com.example.instagramclone.Profile;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,66 +20,99 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.instagramclone.R;
 import com.example.instagramclone.Utils.BottomNavigationViewHelper;
+import com.example.instagramclone.Utils.FirebaseMethods;
 import com.example.instagramclone.Utils.SectionsStatePagerAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
 
-
-/**
- * Created by User on 6/4/2017.
- */
-
-public class AccountSettingsActivity extends AppCompatActivity {
-
+// Currently using ListView to display the items.
+public class AccountSettingsActivity extends AppCompatActivity
+{
     private static final String TAG = "AccountSettingsActivity";
     private static final int ACTIVITY_NUM = 4;
 
     private Context mContext;
 
-    private SectionsStatePagerAdapter pagerAdapter;
+    // FragmentStatePagerAdapter is used to store the fragments and display them dynamically using ViewPager as per request.
+    public SectionsStatePagerAdapter pagerAdapter;
+
     private ViewPager mViewPager;
     private RelativeLayout mRelativeLayout;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accountsettings);
+
         mContext = AccountSettingsActivity.this;
-        Log.d(TAG, "onCreate: started.");
-        mViewPager = (ViewPager) findViewById(R.id.container);
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayout1);
 
         setupSettingsList();
         setupBottomNavigationView();
         setupFragments();
+        getIncomingIntent();
 
-        //setup the backarrow for navigating back to "ProfileActivity"
+        // Setup the back arrow for navigating back to "ProfileActivity".
         ImageView backArrow = (ImageView) findViewById(R.id.backArrow);
-        backArrow.setOnClickListener(new View.OnClickListener() {
+
+        backArrow.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating back to 'ProfileActivity'");
+            public void onClick(View v)
+            {
                 finish();
             }
         });
     }
 
-    private void setupFragments(){
+
+    private void getIncomingIntent(){
+        Intent intent = getIntent();
+
+        if(intent.hasExtra(getString(R.string.selected_image))
+                || intent.hasExtra(getString(R.string.selected_bitmap))){
+
+            //if there is an imageUrl attached as an extra, then it was chosen from the gallery/photo fragment
+            Log.d(TAG, "getIncomingIntent: New incoming imgUrl");
+            if(intent.getStringExtra(getString(R.string.return_to_fragment)).equals(getString(R.string.edit_profile_fragment))){
+
+                if(intent.hasExtra(getString(R.string.selected_image))){
+                    //set the new profile picture
+                    FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+                    firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
+                            intent.getStringExtra(getString(R.string.selected_image)), null);
+                }
+                else if(intent.hasExtra(getString(R.string.selected_bitmap))){
+                    //set the new profile picture
+                    FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+                    firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
+                            null,(Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap)));
+                }
+
+            }
+
+        }
+
+        if(intent.hasExtra(getString(R.string.calling_activity))){
+            Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
+            setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
+        }
+    }
+
+    private void setupFragments()
+    {
         pagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager(), 1);
         pagerAdapter.addFragment(new EditProfileFragment(), getString(R.string.edit_profile_fragment)); //fragment 0
         pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment)); //fragment 1
     }
 
-    private void setViewPager(int fragmentNumber){
-        mRelativeLayout.setVisibility(View.GONE);
-        Log.d(TAG, "setViewPager: navigating to fragment #: " + fragmentNumber);
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setCurrentItem(fragmentNumber);
-    }
-
-    private void setupSettingsList(){
-        Log.d(TAG, "setupSettingsList: initializing 'Account Settings' list.");
+    // To display all the account setting items.
+    private void setupSettingsList()
+    {
         ListView listView = (ListView) findViewById(R.id.lvAccountSettings);
 
         ArrayList<String> options = new ArrayList<>();
@@ -94,36 +129,29 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 setViewPager(position);
             }
         });
-
     }
 
+    public void setViewPager(int fragmentNumber)
+    {
+        // In the same page ( in AccountSettingsActivity ) we will display the item which is clicked. We remove the outer relative layout container
+        // and set the current item relative layout container.
+        mRelativeLayout.setVisibility(View.GONE);
 
-    /**
-     * BottomNavigationView setup
-     */
-    private void setupBottomNavigationView(){
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        // ViewPager is also used to add or remove pages dynamically at the runtime.
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setCurrentItem(fragmentNumber);
+    }
+
+    // BottomNavigationView setup.
+    private void setupBottomNavigationView()
+    {
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
+
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

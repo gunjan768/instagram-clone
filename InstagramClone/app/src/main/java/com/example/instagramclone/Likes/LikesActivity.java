@@ -14,10 +14,6 @@ import com.example.instagramclone.Utils.BottomNavigationViewHelper;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 
-/**
- * Created by User on 5/28/2017.
- */
-
 public class LikesActivity extends AppCompatActivity
 {
     private static final String TAG = "LikesActivity";

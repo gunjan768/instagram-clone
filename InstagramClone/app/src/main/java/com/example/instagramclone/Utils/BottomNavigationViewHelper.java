@@ -2,10 +2,15 @@ package com.example.instagramclone.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.instagramclone.Home.HomeActivity;
 import com.example.instagramclone.Likes.LikesActivity;
@@ -16,7 +21,7 @@ import com.example.instagramclone.Share.ShareActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-public class BottomNavigationViewHelper
+public class BottomNavigationViewHelper extends AppCompatActivity
 {
     private static final String TAG = "BottomNavigationViewHel";
 
@@ -32,14 +37,16 @@ public class BottomNavigationViewHelper
     {
         bottomNavigationViewEx.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener()
         {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item)
             {
-                switch (item.getItemId())
+                switch(item.getItemId())
                 {
                     case R.id.ic_house:
                         Intent intent1 = new Intent(context, HomeActivity.class); //ACTIVITY_NUM = 0
                         context.startActivity(intent1);
+
 
                         break;
 

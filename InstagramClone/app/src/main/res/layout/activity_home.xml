@@ -8,9 +8,16 @@
     tools:context="com.example.instagramclone.Home.HomeActivity">
 
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frame_container">
+    </FrameLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/relLayoutParent">
 
 
         <!-- top toolbar -->
@@ -38,6 +45,5 @@
         <include layout="@layout/layout_bottom_navigation_view"/>
 
     </RelativeLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

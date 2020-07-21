@@ -46,7 +46,6 @@
                     android:src="@drawable/ic_checkmark"
                     android:layout_alignParentRight="true"/>
 
-
             </RelativeLayout>
 
 

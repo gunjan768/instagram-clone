@@ -3,6 +3,9 @@
     package="com.example.instagramclone">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -11,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Home.HomeActivity">
+        <activity android:name=".Login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,7 +27,8 @@
         <activity android:name=".Share.ShareActivity" />
         <activity android:name=".Profile.AccountSettingsActivity" />
         <activity android:name=".Login.RegisterActivity" />
-        <activity android:name=".Login.LoginActivity" />
+        <activity android:name=".Home.HomeActivity" />
+        <activity android:name=".Share.NextActivity" />
     </application>
 
 </manifest>

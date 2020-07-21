@@ -117,22 +117,3 @@ public class GridImageAdapter extends ArrayAdapter<String>
         return convertView;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
