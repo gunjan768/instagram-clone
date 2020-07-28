@@ -18,6 +18,7 @@ import com.example.instagramclone.Utils.ViewPostFragment;
 import com.example.instagramclone.Utils.ViewProfileFragment;
 import com.example.instagramclone.models.Photo;
 import com.example.instagramclone.models.User;
+import com.example.instagramclone.models.UserAccountSettings;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener ,
@@ -95,6 +96,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+    }
+
     private void init()
     {
         Intent intent = getIntent();
@@ -129,9 +136,38 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
                     transaction.commit();
                 }
             }
+            else if(intent.hasExtra("user_following_id"))
+            {
+                String userIdToShow = intent.getStringExtra("user_following_id");
+
+                if(!userIdToShow.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                {
+                    ViewProfileFragment fragment = new ViewProfileFragment();
+                    Bundle args = new Bundle();
+
+                    args.putString("user_id", userIdToShow);
+                    fragment.setArguments(args);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.container, fragment);
+                    transaction.addToBackStack(getString(R.string.view_profile_fragment));
+
+                    transaction.commit();
+                }
+                else
+                {
+                    ProfileFragment fragment = new ProfileFragment();
+
+                    FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.container, fragment);
+                    transaction.addToBackStack(getString(R.string.profile_fragment));
+
+                    transaction.commit();
+                }
+            }
             else
             {
-                Toast.makeText(mContext, "something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         }
         else

@@ -7,13 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.instagramclone.Adapter.StoryAdapter;
 import com.example.instagramclone.R;
 import com.example.instagramclone.Utils.MainfeedListAdapter;
 import com.example.instagramclone.models.Comment;
 import com.example.instagramclone.models.Photo;
+import com.example.instagramclone.models.Story;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +47,10 @@ public class HomeFragment extends Fragment
     private MainfeedListAdapter mAdapter;
     private int mResults, totalComments;
 
+    private StoryAdapter storyAdapter;
+    private List<Story> storyList;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -60,14 +69,29 @@ public class HomeFragment extends Fragment
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
 
+        setStoryRecyclerView(view);
         getFollowing();
 
         return view;
     }
 
+    private void setStoryRecyclerView(View view)
+    {
+        RecyclerView recyclerViewStory = view.findViewById(R.id.recycler_view_story);
+        recyclerViewStory.setHasFixedSize(true);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewStory.setLayoutManager(linearLayoutManager);
+
+        storyList = new ArrayList<>();
+
+        storyAdapter = new StoryAdapter(getContext(), storyList);
+        recyclerViewStory.setAdapter(storyAdapter);
+    }
+
     // If you keep changing the fragments but remains in the same activity ( i.e all fragments that you went to belong to the one same activity ) then
-    // firebase listener will not run again and again. But if you will go the different activity then the listener will get destroy and again on coming back
-    // listener will run.
+    // firebase listener will not run again and again. But if you will go the different activity, listener will get destroy and on coming back listener
+    // will run again.
     private void getFollowing()
     {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -77,7 +101,7 @@ public class HomeFragment extends Fragment
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 // Log.d(TAG, "onDataChange: found user here in the top level so see it : " + dataSnapshot);
 
@@ -91,10 +115,11 @@ public class HomeFragment extends Fragment
                 mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                 getPhotos();
+                readStory();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
 
             }
@@ -115,7 +140,7 @@ public class HomeFragment extends Fragment
             query.addListenerForSingleValueEvent(new ValueEventListener()
             {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                 {
                     for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                     {
@@ -157,7 +182,7 @@ public class HomeFragment extends Fragment
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError)
+                public void onCancelled(@NonNull DatabaseError databaseError)
                 {
 
                 }
@@ -234,7 +259,7 @@ public class HomeFragment extends Fragment
                 }
 
                 // Add the new photos to the paginated results.
-                for(int i = mResults; i < mResults + iterations; i++)
+                for(int i=mResults; i<mResults+iterations; i++)
                 {
                     mPaginatedPhotos.add(mPhotos.get(i));
                 }
@@ -251,5 +276,51 @@ public class HomeFragment extends Fragment
         {
             Log.e(TAG, "displayPhotos: IndexOutOfBoundsException: " + e.getMessage() );
         }
+    }
+
+    private void readStory()
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
+
+        reference.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                long timecurrent = System.currentTimeMillis();
+                storyList.clear();
+
+                storyList.add(new Story("", 0, 0, "", FirebaseAuth.getInstance().getCurrentUser().getUid()));
+
+                for(String id : mFollowing)
+                {
+                    int countStory = 0;
+                    Story story = null;
+
+                    for(DataSnapshot snapshot : dataSnapshot.child(id).getChildren())
+                    {
+                        story = snapshot.getValue(Story.class);
+
+                        if(timecurrent > story.getTimestart() && timecurrent < story.getTimeend())
+                        {
+                            countStory++;
+                        }
+                    }
+
+                    if(countStory > 0)
+                    {
+                        storyList.add(story);
+                    }
+                }
+
+                storyAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
     }
 }

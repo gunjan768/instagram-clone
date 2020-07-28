@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -105,7 +106,7 @@ public class SearchActivity extends AppCompatActivity
             query.addListenerForSingleValueEvent(new ValueEventListener()
             {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                 {
 
                     for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
@@ -119,7 +120,7 @@ public class SearchActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError)
+                public void onCancelled(@NonNull DatabaseError databaseError)
                 {
 
                 }
@@ -141,10 +142,11 @@ public class SearchActivity extends AppCompatActivity
             {
                 // Log.d(TAG, "onItemClick: selected user: " + mUserList.get(position).toString());
 
-                //navigate to profile activity.
                 Intent intent =  new Intent(SearchActivity.this, ProfileActivity.class);
+
                 intent.putExtra(getString(R.string.calling_activity), getString(R.string.search_activity));
                 intent.putExtra(getString(R.string.intent_user), mUserList.get(position));
+
                 startActivity(intent);
             }
         });

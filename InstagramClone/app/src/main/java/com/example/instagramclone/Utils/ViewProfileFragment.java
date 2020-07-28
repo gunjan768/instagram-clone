@@ -84,11 +84,8 @@ public class ViewProfileFragment extends Fragment
     private int mPostsCount = 0;
 
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    private void setInitialConfiguration(View view)
     {
-        View view = inflater.inflate(R.layout.fragment_view_profile, container, false);
         mDisplayName = (TextView) view.findViewById(R.id.display_name);
         mUsername = (TextView) view.findViewById(R.id.username);
         mWebsite = (TextView) view.findViewById(R.id.website);
@@ -105,34 +102,48 @@ public class ViewProfileFragment extends Fragment
         editProfile  = (TextView) view.findViewById(R.id.textEditProfile);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mContext = getActivity();
+    }
 
-        try
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        View view = inflater.inflate(R.layout.fragment_view_profile, container, false);
+
+        setInitialConfiguration(view);
+
+        if(checkIfUserIdIsDirectlyThere() != "NOT_EXIST")
         {
-            mUser = getUserFromBundle();
-            init();
+            String userId = checkIfUserIdIsDirectlyThere();
+
+            getUserFromServer(userId);
         }
-        catch(NullPointerException e)
+        else
         {
-            Log.e(TAG, "onCreateView: NullPointerException: "  + e.getMessage() );
+            try
+            {
+                mUser = getUserFromBundle();
 
-            Toast.makeText(mContext, "something went wrong", Toast.LENGTH_SHORT).show();
-            getActivity().getSupportFragmentManager().popBackStack();
+                init();
+            }
+            catch(NullPointerException e)
+            {
+                Log.e(TAG, "onCreateView: NullPointerException: "  + e.getMessage() );
+
+                Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
         }
 
         setupBottomNavigationView();
         setupFirebaseAuth();
-
-        isFollowing();
-        getFollowingCount();
-        getFollowersCount();
-        getPostsCount();
 
         mFollow.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: now following: " + mUser.getUsername());
+                // Log.d(TAG, "onClick: now following: " + mUser.getUsername());
 
                 FirebaseDatabase.getInstance().getReference()
                         .child(getString(R.string.dbname_following))
@@ -158,7 +169,7 @@ public class ViewProfileFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: now unfollowing: " + mUser.getUsername());
+                // Log.d(TAG, "onClick: Now un-following: " + mUser.getUsername());
 
                 FirebaseDatabase.getInstance().getReference()
                         .child(getString(R.string.dbname_following))
@@ -195,6 +206,27 @@ public class ViewProfileFragment extends Fragment
     }
 
 
+    private void getUserFromServer(String userId)
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                mUser = snapshot.getValue(User.class);
+
+                init();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
 
     private void init()
     {
@@ -206,7 +238,7 @@ public class ViewProfileFragment extends Fragment
         query1.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
                 {
@@ -220,7 +252,7 @@ public class ViewProfileFragment extends Fragment
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -233,11 +265,11 @@ public class ViewProfileFragment extends Fragment
         query2.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 ArrayList<Photo> photos = new ArrayList<Photo>();
 
-                for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
                     Photo photo = new Photo();
                     Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
@@ -279,10 +311,15 @@ public class ViewProfileFragment extends Fragment
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d(TAG, "onCancelled: query cancelled.");
             }
         });
+
+        isFollowing();
+        getFollowingCount();
+        getFollowersCount();
+        getPostsCount();
     }
 
     private void isFollowing()
@@ -451,14 +488,30 @@ public class ViewProfileFragment extends Fragment
         });
     }
 
+    private String checkIfUserIdIsDirectlyThere()
+    {
+        Bundle bundle = this.getArguments();
+
+        String userId = bundle.getString("user_id");
+
+        if(userId != null)
+        return userId;
+
+        return "NOT_EXIST";
+    }
+
     private User getUserFromBundle()
     {
         // Log.d(TAG, "getUserFromBundle: arguments: " + getArguments());
 
         Bundle bundle = this.getArguments();
-        if(bundle != null){
+
+        if(bundle != null)
+        {
             return bundle.getParcelable(getString(R.string.intent_user));
-        }else{
+        }
+        else
+        {
             return null;
         }
     }

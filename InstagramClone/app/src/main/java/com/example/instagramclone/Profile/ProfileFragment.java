@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -129,7 +130,7 @@ public class ProfileFragment extends Fragment
                 intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
                 startActivity(intent);
 
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
 
@@ -163,7 +164,7 @@ public class ProfileFragment extends Fragment
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
                 {
@@ -239,7 +240,7 @@ public class ProfileFragment extends Fragment
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
                 Log.d(TAG, "onCancelled: query cancelled.");
             }
@@ -286,7 +287,7 @@ public class ProfileFragment extends Fragment
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
                 {
@@ -299,7 +300,7 @@ public class ProfileFragment extends Fragment
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
 
             }
@@ -316,7 +317,7 @@ public class ProfileFragment extends Fragment
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
                 {
@@ -329,7 +330,7 @@ public class ProfileFragment extends Fragment
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
 
             }
