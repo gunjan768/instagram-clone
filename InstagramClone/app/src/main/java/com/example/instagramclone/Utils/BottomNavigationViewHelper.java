@@ -23,7 +23,7 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class BottomNavigationViewHelper extends AppCompatActivity
 {
-    private static final String TAG = "BottomNavigationViewHel";
+    private static final String TAG = "BottomNavigationViewHelper";
 
     public static void setupBottomNavigationView(BottomNavigationViewEx bottomNavigationViewEx)
     {
@@ -46,7 +46,6 @@ public class BottomNavigationViewHelper extends AppCompatActivity
                     case R.id.ic_house:
                         Intent intent1 = new Intent(context, HomeActivity.class); //ACTIVITY_NUM = 0
                         context.startActivity(intent1);
-
 
                         break;
 

@@ -25,6 +25,7 @@ import com.example.instagramclone.Utils.SectionsStatePagerAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 // Currently using ListView to display the items.
 public class AccountSettingsActivity extends AppCompatActivity
@@ -38,7 +39,7 @@ public class AccountSettingsActivity extends AppCompatActivity
     public SectionsStatePagerAdapter pagerAdapter;
 
     private ViewPager mViewPager;
-    private RelativeLayout mRelativeLayout;
+    protected static RelativeLayout mRelativeLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -70,35 +71,39 @@ public class AccountSettingsActivity extends AppCompatActivity
     }
 
 
-    private void getIncomingIntent(){
+    private void getIncomingIntent()
+    {
         Intent intent = getIntent();
 
-        if(intent.hasExtra(getString(R.string.selected_image))
-                || intent.hasExtra(getString(R.string.selected_bitmap))){
+        if(intent.hasExtra(getString(R.string.selected_image)) || intent.hasExtra(getString(R.string.selected_bitmap)))
+        {
+            // If there is an imageUrl attached as an extra, then it was chosen from the gallery/photo fragment
+            // Log.d(TAG, "getIncomingIntent: New incoming imgUrl");
 
-            //if there is an imageUrl attached as an extra, then it was chosen from the gallery/photo fragment
-            Log.d(TAG, "getIncomingIntent: New incoming imgUrl");
-            if(intent.getStringExtra(getString(R.string.return_to_fragment)).equals(getString(R.string.edit_profile_fragment))){
-
-                if(intent.hasExtra(getString(R.string.selected_image))){
-                    //set the new profile picture
+            if(Objects.equals(intent.getStringExtra(getString(R.string.return_to_fragment)), getString(R.string.edit_profile_fragment)))
+            {
+                if(intent.hasExtra(getString(R.string.selected_image)))
+                {
+                    // Set the new profile picture.
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
                     firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
                             intent.getStringExtra(getString(R.string.selected_image)), null);
                 }
-                else if(intent.hasExtra(getString(R.string.selected_bitmap))){
-                    //set the new profile picture
+                else if(intent.hasExtra(getString(R.string.selected_bitmap)))
+                {
+                    // Set the new profile picture.
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+
                     firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
                             null,(Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap)));
                 }
-
             }
-
         }
 
-        if(intent.hasExtra(getString(R.string.calling_activity))){
-            Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
+        if(intent.hasExtra(getString(R.string.calling_activity)))
+        {
+            // Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
+
             setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
         }
     }
@@ -106,8 +111,9 @@ public class AccountSettingsActivity extends AppCompatActivity
     private void setupFragments()
     {
         pagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager(), 1);
-        pagerAdapter.addFragment(new EditProfileFragment(), getString(R.string.edit_profile_fragment)); //fragment 0
-        pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment)); //fragment 1
+
+        pagerAdapter.addFragment(new EditProfileFragment(), getString(R.string.edit_profile_fragment));     // fragment 0
+        pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment));             // fragment 1
     }
 
     // To display all the account setting items.
@@ -116,16 +122,19 @@ public class AccountSettingsActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.lvAccountSettings);
 
         ArrayList<String> options = new ArrayList<>();
-        options.add(getString(R.string.edit_profile_fragment)); //fragment 0
-        options.add(getString(R.string.sign_out_fragment)); //fragement 1
+        options.add(getString(R.string.edit_profile_fragment));     //   fragment 0
+        options.add(getString(R.string.sign_out_fragment));         //   fragment 1
 
         ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_1, options);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: navigating to fragment#: " + position);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                // Log.d(TAG, "onItemClick: navigating to fragment#: " + position);
+
                 setViewPager(position);
             }
         });

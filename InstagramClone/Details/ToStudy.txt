@@ -1,0 +1,8 @@
+Proficiency in object oriented programming, MVC architecture, multithreading, networking, memory management and source control management (git)
+Strong focus on high-quality mobile UI experiences. Experience with UI/UX paradigms to build elegant user experiences
+Experience working with product and design teams
+Experience analyzing a feature in production using analytics and experiments
+Bonus points if
+BS/MS in Computer Science or a related field
+Knowledgeable in Reactive programming (RxJava), Kotlin, Android NDK and Dependency injection.
+Knowledgeable in WebSockets, Server Sent Events, or HTTP/2 Server Push

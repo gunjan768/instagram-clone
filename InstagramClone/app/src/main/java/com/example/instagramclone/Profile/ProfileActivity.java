@@ -21,6 +21,8 @@ import com.example.instagramclone.models.User;
 import com.example.instagramclone.models.UserAccountSettings;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener ,
         ViewPostFragment.OnCommentThreadSelectedListener, ViewProfileFragment.OnGridImageSelectedListener
 {
@@ -114,7 +116,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
             {
                 User user = intent.getParcelableExtra(getString(R.string.intent_user));
 
-                if(!user.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                assert user != null;
+                if(!user.getUser_id().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
                 {
                     ViewProfileFragment fragment = new ViewProfileFragment();
                     Bundle args = new Bundle();
@@ -130,9 +133,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
                 else
                 {
                     ProfileFragment fragment = new ProfileFragment();
+
                     FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.container, fragment);
                     transaction.addToBackStack(getString(R.string.profile_fragment));
+
                     transaction.commit();
                 }
             }
@@ -140,7 +145,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
             {
                 String userIdToShow = intent.getStringExtra("user_following_id");
 
-                if(!userIdToShow.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                assert userIdToShow != null;
+                if(!userIdToShow.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
                 {
                     ViewProfileFragment fragment = new ViewProfileFragment();
                     Bundle args = new Bundle();
@@ -177,6 +183,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
             FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.container, fragment);
             transaction.addToBackStack(getString(R.string.profile_fragment));
+
             transaction.commit();
         }
     }

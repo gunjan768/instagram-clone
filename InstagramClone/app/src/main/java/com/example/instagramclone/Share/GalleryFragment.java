@@ -3,6 +3,7 @@ package com.example.instagramclone.Share;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -52,29 +54,29 @@ public class GalleryFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(Objects.requireNonNull(getActivity())));
 
-        galleryImage = (ImageView) view.findViewById(R.id.galleryImageView);
-        gridView = (GridView) view.findViewById(R.id.gridView);
-        directorySpinner = (Spinner) view.findViewById(R.id.spinnerDirectory);
+        galleryImage = view.findViewById(R.id.galleryImageView);
+        gridView = view.findViewById(R.id.gridView);
+        directorySpinner = view.findViewById(R.id.spinnerDirectory);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        mProgressBar = view.findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
 
         directories = new ArrayList<>();
 
-        ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);
+        ImageView shareClose = view.findViewById(R.id.ivCloseShare);
 
         shareClose.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                getActivity().finish();
+                Objects.requireNonNull(getActivity()).finish();
             }
         });
 
-        TextView nextScreen = (TextView) view.findViewById(R.id.tvNext);
+        TextView nextScreen = view.findViewById(R.id.tvNext);
 
         nextScreen.setOnClickListener(new View.OnClickListener()
         {
@@ -97,7 +99,7 @@ public class GalleryFragment extends Fragment
                     intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
 
                     startActivity(intent);
-                    getActivity().finish();
+                    Objects.requireNonNull(getActivity()).finish();
                 }
             }
         });
@@ -115,26 +117,32 @@ public class GalleryFragment extends Fragment
 
     private void init()
     {
+        // User made class.
         FilePaths filePaths = new FilePaths();
 
         // Check for other folders inside "/storage/emulated/0/pictures".
         directories = FileSearch.getDirectoryPaths(filePaths.PICTURES);
+        directories.addAll(filePaths.DIRECTORIES_INSIDE_DCIM);
 
-        directories.add(filePaths.CAMERA);
         ArrayList<String> directoryNames = new ArrayList<>();
 
+        // In this for loop we are trimming the name of the file directories ( making the long name short ).
         for(int i=0; i<directories.size(); i++)
         {
             // Log.d(TAG, "init: directory: " + directories.get(i));
 
             int index = directories.get(i).lastIndexOf("/");
             String string = directories.get(i).substring(index);
+
             directoryNames.add(string);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), android.R.layout.simple_spinner_item, directoryNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        directorySpinner.setAdapter(adapter);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()),
+                android.R.layout.simple_spinner_item, directoryNames
+        );
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        directorySpinner.setAdapter(spinnerAdapter);
 
         directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {

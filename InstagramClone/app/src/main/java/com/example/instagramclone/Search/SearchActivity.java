@@ -158,6 +158,8 @@ public class SearchActivity extends AppCompatActivity
         if(getCurrentFocus() != null)
         {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+            // You can use flags like 'InputMethodManager.HIDE_NOT_ALWAYS'. 'InputMethodManager.SHOW_IMPLICIT' is the flag to show the keyboard.
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
@@ -167,7 +169,7 @@ public class SearchActivity extends AppCompatActivity
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContext,bottomNavigationViewEx);
+        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
 
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);

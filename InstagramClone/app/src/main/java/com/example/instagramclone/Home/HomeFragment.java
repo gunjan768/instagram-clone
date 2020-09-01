@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class HomeFragment extends Fragment
@@ -96,7 +97,7 @@ public class HomeFragment extends Fragment
     {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        Query query = reference.child(getString(R.string.dbname_following)).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        Query query = reference.child(getString(R.string.dbname_following)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -109,7 +110,7 @@ public class HomeFragment extends Fragment
                 {
                     // Log.d(TAG, "onDataChange: found user: " + singleSnapshot);
 
-                    mFollowing.add(singleSnapshot.child(getString(R.string.field_user_id)).getValue().toString());
+                    mFollowing.add(Objects.requireNonNull(singleSnapshot.child(getString(R.string.field_user_id)).getValue()).toString());
                 }
 
                 mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -223,7 +224,7 @@ public class HomeFragment extends Fragment
 
                 // Log.i("All the images here watch it", String.valueOf(mPaginatedPhotos));
 
-                mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPaginatedPhotos);
+                mAdapter = new MainfeedListAdapter(Objects.requireNonNull(getActivity()), R.layout.layout_mainfeed_listitem, mPaginatedPhotos);
                 mListView.setAdapter(mAdapter);
             }
             catch(NullPointerException e)
@@ -287,7 +288,7 @@ public class HomeFragment extends Fragment
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                long timecurrent = System.currentTimeMillis();
+                long timeCurrent = System.currentTimeMillis();
                 storyList.clear();
 
                 storyList.add(new Story("", 0, 0, "", FirebaseAuth.getInstance().getCurrentUser().getUid()));
@@ -301,7 +302,7 @@ public class HomeFragment extends Fragment
                     {
                         story = snapshot.getValue(Story.class);
 
-                        if(timecurrent > story.getTimestart() && timecurrent < story.getTimeend())
+                        if(timeCurrent > story.getTimestart() && timeCurrent < story.getTimeend())
                         {
                             countStory++;
                         }

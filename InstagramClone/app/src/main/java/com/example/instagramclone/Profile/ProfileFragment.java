@@ -138,7 +138,7 @@ public class ProfileFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Context context)
+    public void onAttach(@NonNull Context context)
     {
         try
         {
@@ -357,7 +357,7 @@ public class ProfileFragment extends Fragment
 
     private void setupToolbar()
     {
-        ((ProfileActivity)getActivity()).setSupportActionBar(toolbar);
+        ((ProfileActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);
 
         profileMenu.setOnClickListener(new View.OnClickListener()
         {
@@ -368,7 +368,8 @@ public class ProfileFragment extends Fragment
 
                 Intent intent = new Intent(mContext, AccountSettingsActivity.class);
                 startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }
@@ -416,13 +417,13 @@ public class ProfileFragment extends Fragment
         myRef.addValueEventListener(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 setProfileWidgets(mFirebaseMethods.getUserSettings(dataSnapshot));
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
 
             }

@@ -1,0 +1,33 @@
+https://developer.android.com/reference/android/support/v4/app/Fragment.html
+https://stackoverflow.com/questions/13757875/getchildfragmentmanager-on-programmatically-dynamically-added-fragments
+
+getFragmentManager belong to Activity
+getChildFragmentManager belong to Fragment
+
+Meanwhile the definition of getFragmentManager() (or in this case getSupportFragmentManager()) is:
+
+Return the FragmentManager for interacting with fragments associated with this fragment's activity.
+
+Basically, the difference is that Fragment's now have their own internal FragmentManager that can handle Fragments. The child FragmentManager is the one that handles Fragments 
+contained within only the Fragment that it was added to. The other FragmentManager is contained within the entire Activity.
+
+You can now embed fragments inside fragments. This is useful for a variety of situations in which you want to place dynamic and re-usable UI components into a UI component that is 
+itself dynamic and re-usable. For example, if you use ViewPager to create fragments that swipe left and right and consume a majority of the screen space, you can now insert fragments
+ into each fragment page. To nest a fragment, simply call getChildFragmentManager() on the Fragment in which you want to add a fragment. This returns a FragmentManager that you can 
+use like you normally do from the top-level activity to create fragment transactions. For example, here’s some code that adds a fragment from within an existing Fragment class:
+
+Fragment videoFragment = new VideoPlayerFragment();
+FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+transaction.add(R.id.video_fragment, videoFragment).commit();
+
+FragmentManager getChildFragmentManager () : Return a private FragmentManager for placing and managing Fragments inside of this Fragment.
+FragmentManager getFragmentManager() : Return the FragmentManager for interacting with fragments associated with this fragment's activity.
+FragmentManager getParentFragment() : Returns the parent Fragment containing this Fragment. If this Fragment is attached directly to an Activity, returns null.
+LayoutInflater getLayoutInflater() : Returns the cached LayoutInflater used to inflate Views of this Fragment.
+Context getContext () : Return the Context this fragment is currently associated with.
+FragmentActivity getActivity () : Return the FragmentActivity this fragment is currently associated with. May return null if the fragment is associated with a Context instead.
+Bundle getArguments () : Return the arguments supplied when the fragment was instantiated, if any.
+
+Fragment () : Default constructor. Every fragment must have an empty constructor, so it can be instantiated when restoring its activity's state. It is strongly recommended that 
+subclasses do not  have other constructors with parameters, since these constructors will not be called when the fragment is re-instantiated; instead, arguments can be supplied by the 
+caller with setArguments(Bundle) and later retrieved by the Fragment with getArguments().

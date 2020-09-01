@@ -19,6 +19,8 @@ import com.example.instagramclone.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class SignOutFragment extends Fragment
 {
     private static final String TAG = "SignOutFragment";
@@ -27,7 +29,7 @@ public class SignOutFragment extends Fragment
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private ProgressBar mProgressBar;
-    private TextView tvSignout, tvSigningOut;
+    private TextView tvSigningOut;
 
     @Nullable
     @Override
@@ -35,7 +37,7 @@ public class SignOutFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_signout, container, false);
 
-        tvSignout = view.findViewById(R.id.tvConfirmSignout);
+        TextView tvSignOut = view.findViewById(R.id.tvConfirmSignout);
         mProgressBar = view.findViewById(R.id.progressBar);
         tvSigningOut = view.findViewById(R.id.tvSigningOut);
         Button btnConfirmSignOut = view.findViewById(R.id.btnConfirmSignout);
@@ -56,7 +58,7 @@ public class SignOutFragment extends Fragment
                 tvSigningOut.setVisibility(View.VISIBLE);
 
                 mAuth.signOut();
-                getActivity().finish();
+                Objects.requireNonNull(getActivity()).finish();
             }
         });
 

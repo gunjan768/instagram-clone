@@ -41,10 +41,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 public class MainfeedListAdapter extends ArrayAdapter<Photo>
 {
@@ -171,13 +171,13 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo>
         final ImageLoader imageLoader = ImageLoader.getInstance();
 
         if(holder.image != null)
-        imageLoader.displayImage(getItem(position).getImage_path(), holder.image);
+        imageLoader.displayImage(Objects.requireNonNull(getItem(position)).getImage_path(), holder.image);
 
         // Get the profile image and username.
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         Query query = reference.child(mContext.getString(R.string.dbname_user_account_settings)).orderByChild(mContext.getString(R.string.field_user_id))
-                .equalTo(getItem(position).getUser_id());
+                .equalTo(Objects.requireNonNull(getItem(position)).getUser_id());
 
         // Listening for all the users whom we follow i.e whose photos are there on the HomePage. It's inside getView() hence it will run for every photo that are
         // visible on the screen.
